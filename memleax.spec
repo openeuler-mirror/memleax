@@ -6,10 +6,22 @@ License: GPLv2
 URL: https://github.com/WuBingzheng/memleax
 Source0: https://github.com/WuBingzheng/memleax/archive/memleax-%{version}.tar.gz
 
-BuildRequires: 	make
+BuildRequires: 	make libunwind-devel elfutils-devel gdb
 
 %description
-cloc is a tool which can help to do program line caculation.
+memleax debugs memory leak of a running process by attaching it.
+It hooks the target process's invocation of memory allocation and free,
+and reports the memory blocks which live long enough as memory leak, in real time.
+The default expire threshold is 10 seconds, however you should always
+set it by `-e` option according to your scenarios.
+
+It is very *convenient* to use, and suitable for production environment.
+There is no need to recompile the program or restart the target process.
+You run `memleax` to monitor the target process, wait for the real-time memory
+leak report, and then kill it (e.g. by Ctrl-C) to stop monitoring.
+
+memleax follows new threads, but not forked processes.
+If you want to debug multiple processes, just run multiple memleax.
 
 %prep
 %setup -q -n %{name}-%{version}/
