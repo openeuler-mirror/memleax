@@ -1,10 +1,10 @@
 Name:    memleax
 Version: 1.1.1
-Release: 1
+Release: 2
 Summary: Memory lead detection tool
 License: GPLv2
 URL: https://github.com/WuBingzheng/memleax
-Source0: https://github.com/WuBingzheng/memleax/archive/memleax-%{version}.tar.gz
+Source0: https://github.com/WuBingzheng/memleax/archive/v%{version}#/memleax-%{version}.tar.gz
 
 BuildRequires: 	make libunwind-devel elfutils-devel gdb
 
@@ -46,6 +46,9 @@ make install DESTDIR="%{buildroot}"
 %{_mandir}/man1/%{name}.1*
 
 %changelog
+* Tue Oct 13 2020 Qingqing Li <liqingqing3@huawei.com>
+- update source0
+
 * Sun Mar 29 2020 Wei Xiong <myeuler@163.com>
 - Package init
 
