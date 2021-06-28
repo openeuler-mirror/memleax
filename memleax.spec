@@ -1,12 +1,12 @@
 Name:    memleax
 Version: 1.1.1
-Release: 3
+Release: 4
 Summary: Memory lead detection tool
 License: GPLv2
 URL: https://github.com/WuBingzheng/memleax
 Source0: https://github.com/WuBingzheng/memleax/archive/v%{version}.tar.gz#/memleax-%{version}.tar.gz
 
-BuildRequires: 	make libunwind-devel elfutils-devel gdb
+BuildRequires: 	make libunwind-devel elfutils-devel gdb gcc
 
 %description
 memleax debugs memory leak of a running process by attaching it.
@@ -46,6 +46,9 @@ make install DESTDIR="%{buildroot}"
 %{_mandir}/man1/%{name}.1*
 
 %changelog
+* Mon Jun 28 2021 wulei <wulei80@huawei.com> - 1.1.1-4
+- fix missing gcc
+
 * Mon Oct 19 2020 Qingqing Li <liqingqing3@huawei.com>
 - fix source0 error
 
