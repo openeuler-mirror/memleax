@@ -1,10 +1,11 @@
 Name:    memleax
 Version: 1.1.1
-Release: 5
+Release: 6
 Summary: Memory lead detection tool
 License: GPLv2
 URL: https://github.com/WuBingzheng/memleax
 Source0: https://github.com/WuBingzheng/memleax/archive/v%{version}.tar.gz#/memleax-%{version}.tar.gz
+Patch0:    0001-add-loongarch64-support.patch
 
 BuildRequires: 	make libunwind-devel elfutils-devel gcc
 
@@ -24,7 +25,8 @@ memleax follows new threads, but not forked processes.
 If you want to debug multiple processes, just run multiple memleax.
 
 %prep
-%setup -q -n %{name}-%{version}/
+%setup -q 
+%autosetup -n %{name}-%{version} -p1
 
 %build
 ./configure
@@ -46,6 +48,9 @@ make install DESTDIR="%{buildroot}"
 %{_mandir}/man1/%{name}.1*
 
 %changelog
+* Wed Dec 14 2022 doupengda <doupengda@loongson.cn> - 1.1.1-6
+- add loongarch64 support
+
 * Wed Aug 04 2021 chenyanpanHW <chenyanpan@huawei.com> - 1.1.1-5
 - DESC: delete BuildRequires gdb
 
