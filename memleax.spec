@@ -5,8 +5,7 @@ Summary: Memory lead detection tool
 License: GPLv2
 URL: https://github.com/WuBingzheng/memleax
 Source0: https://github.com/WuBingzheng/memleax/archive/v%{version}.tar.gz#/memleax-%{version}.tar.gz
-Patch0:    0001-add-loongarch64-support.patch
-
+Patch1:    0001-add-loongarch64-support.patch
 BuildRequires: 	make libunwind-devel elfutils-devel gdb gcc
 
 %description
@@ -26,7 +25,9 @@ If you want to debug multiple processes, just run multiple memleax.
 
 %prep
 %setup -q 
-%autosetup -n %{name}-%{version} -p1
+%ifarch loongarch64
+%patch1 -p1
+%endif
 
 %build
 ./configure
