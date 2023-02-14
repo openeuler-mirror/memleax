@@ -1,0 +1,74 @@
+From e82e3332d36a97a86cc1e23e7f3c6e953a1ada2c Mon Sep 17 00:00:00 2001
+From: doupengda <doupengda@loongson.cn>
+Date: Wed, 14 Dec 2022 02:58:36 +0000
+Subject: [PATCH] add loongarch64 support
+
+---
+ configure  |   6 +-
+ machines.h |  31 +++++++
+ tags       | 252 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 288 insertions(+), 1 deletion(-)
+ create mode 100644 tags
+
+diff --git a/configure b/configure
+index 7c7280f..60fd170 100755
+--- a/configure
++++ b/configure
+@@ -59,9 +59,13 @@ case `uname -m` in
+ 	machine="aarch64"
+ 	CFLAGS="$CFLAGS -DMLX_AARCH64"
+ 	;;
++'loongarch64')
++	machine="loongarch64"
++	CFLAGS="$CFLAGS -DMLX_LOONGARCH64"
++	;;
+ *)
+ 	echo "Error: unsupported machine: `uname -m`."
+-	echo "Only x86, x86_64, arm, and aarch64 are supported."
++	echo "Only x86, x86_64, arm, loongarch and aarch64 are supported."
+ 	exit 2
+ 	;;
+ esac
+diff --git a/machines.h b/machines.h
+index cbbe69d..4472bd1 100644
+--- a/machines.h
++++ b/machines.h
+@@ -87,6 +87,37 @@ static inline int is_breakpoint(pid_t pid, uintptr_t address)
+ 	return (ptrace_get_data(pid, address) & 0xFF) == 0xCC;
+ }
+ 
++#elif defined(MLX_LOONGARCH64)
++static inline uintptr_t call_return_address(pid_t pid, registers_info_t *regs)
++{
++	return ptrace_get_data(pid, regs->gpr[3]);
++}
++static inline uintptr_t call_return_value(registers_info_t *regs)
++{
++	return regs->gpr[1];
++}
++static inline uintptr_t call_arg1(pid_t pid, registers_info_t *regs)
++{
++	return regs->gpr[6];
++}
++static inline uintptr_t call_arg2(pid_t pid, registers_info_t *regs)
++{
++	return regs->gpr[7];
++}
++static inline uintptr_t pc_unwind(pid_t pid, registers_info_t *regs)
++{
++	return regs->pc;
++}
++static inline void set_breakpoint(pid_t pid, uintptr_t address, uintptr_t code)
++{
++	ptrace_set_data(pid, address, (code & 0x002a0000));
++}
++static inline int is_breakpoint(pid_t pid, uintptr_t address)
++{
++	return ptrace_get_data(pid, address) == 0x002a0000;
++}
++
++
+ #elif defined(MLX_ARMv7)
+ static inline uintptr_t call_return_address(pid_t pid, registers_info_t *regs)
+ {
+
