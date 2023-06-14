@@ -1,0 +1,36 @@
+diff -u -r memleax-1.1.1/configure memleax-1.1.1/configure
+--- memleax-1.1.1/configure	2018-01-04 06:05:08.000000000 +0800
++++ memleax-1.1.1/configure	2023-06-14 14:54:17.000000000 +0800
+@@ -104,12 +104,12 @@
+ 			return 0;
+ 		}
+ EOF
+-	if ! cc -M $CFLAGS $cflags tmp.c >/dev/null 2>&1 ; then
++	if ! $CC -M $CFLAGS $cflags tmp.c >/dev/null 2>&1 ; then
+ 		echo "$lib-devel is missing."
+ 		rm -f tmp.c
+ 		return 1
+ 	fi
+-	if ! cc $CFLAGS $cflags tmp.c -o tmp $LDFLAGS $LDLIBS $ldflags >/dev/null 2>&1 ; then
++	if ! $CC $CFLAGS $cflags tmp.c -o tmp $LDFLAGS $LDLIBS $ldflags >/dev/null 2>&1 ; then
+ 		echo "$lib is missing."
+ 		rm -f tmp.c tmp
+ 		return 1
+@@ -155,7 +155,7 @@
+ 
+ cat << EOF > Makefile
+ CFLAGS = $CFLAGS -g -O2 -Wall
+-LDLIBS = $LDLIBS
++LDLIBS = $LDLIBS -llzma
+ LDFLAGS = $LDFLAGS
+ PREFIX = $prefix
+ DESTDIR =
+@@ -185,7 +185,7 @@
+ 
+ EOF
+ 
+-cc -MM $CFLAGS $SOURCES >> Makefile
++$CC -MM $CFLAGS $SOURCES >> Makefile
+ 
+ # done
+ echo 'done.'

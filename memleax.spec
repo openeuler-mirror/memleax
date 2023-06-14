@@ -1,11 +1,12 @@
 Name:    memleax
 Version: 1.1.1
-Release: 6
+Release: 7
 Summary: Memory lead detection tool
 License: GPLv2
 URL: https://github.com/WuBingzheng/memleax
 Source0: https://github.com/WuBingzheng/memleax/archive/v%{version}.tar.gz#/memleax-%{version}.tar.gz
 Patch0:    0001-add-loongarch64-support.patch
+Patch1:    fix-clang.patch
 
 BuildRequires: 	make libunwind-devel elfutils-devel gcc
 
@@ -48,6 +49,9 @@ make install DESTDIR="%{buildroot}"
 %{_mandir}/man1/%{name}.1*
 
 %changelog
+* Wed Jun 14 2023 yoo <sunyuechi@iscas.ac.cn> - 1.1.1-7
+- fix clang build error
+
 * Wed Dec 14 2022 doupengda <doupengda@loongson.cn> - 1.1.1-6
 - add loongarch64 support
 
