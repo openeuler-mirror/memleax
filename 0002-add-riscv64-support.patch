@@ -1,0 +1,70 @@
+diff -ur memleax-1.1.1/configure memleax-1.1.1/configure
+--- memleax-1.1.1/configure	2023-06-30 17:05:04.238829702 +0800
++++ memleax-1.1.1/configure	2023-06-30 17:06:34.391052484 +0800
+@@ -63,9 +63,13 @@
+ 	machine="loongarch64"
+ 	CFLAGS="$CFLAGS -DMLX_LOONGARCH64"
+ 	;;
++'riscv64')
++	machine="riscv"
++	CFLAGS="$CFLAGS -DMLX_RISCV64"
++	;;
+ *)
+ 	echo "Error: unsupported machine: `uname -m`."
+-	echo "Only x86, x86_64, arm, loongarch and aarch64 are supported."
++	echo "Only x86, x86_64, arm, loongarch, riscv and aarch64 are supported."
+ 	exit 2
+ 	;;
+ esac
+Only in memleax-1.1.1/: configure.orig
+diff -ur memleax-1.1.1/machines.h memleax-1.1.1/machines.h
+--- memleax-1.1.1/machines.h	2023-06-30 17:04:56.242809943 +0800
++++ memleax-1.1.1/machines.h	2023-06-30 16:30:58.889630806 +0800
+@@ -177,6 +177,35 @@
+ {
+ 	return ptrace_get_data(pid, address) == 0xd4200000;
+ }
++#elif defined(MLX_RISCV64)
++static inline uintptr_t call_return_address(pid_t pid, registers_info_t *regs)
++{
++	return regs->ra;
++}
++static inline uintptr_t call_return_value(registers_info_t *regs)
++{
++	return regs->a0;
++}
++static inline uintptr_t call_arg1(pid_t pid, registers_info_t *regs)
++{
++	return regs->a0;
++}
++static inline uintptr_t call_arg2(pid_t pid, registers_info_t *regs)
++{
++	return regs->a1;
++}
++static inline uintptr_t pc_unwind(pid_t pid, registers_info_t *regs)
++{
++	return regs->pc;
++}
++static inline void set_breakpoint(pid_t pid, uintptr_t address, uintptr_t code)
++{
++	ptrace_set_data(pid, address,  0x00100073);
++}
++static inline int is_breakpoint(pid_t pid, uintptr_t address)
++{
++	return ptrace_get_data(pid, address) ==  0x00100073;
++}
+ #endif
+ 
+ #endif
+diff -ur memleax-1.1.1/ptrace_utils.h memleax-1.1.1/ptrace_utils.h
+--- memleax-1.1.1/ptrace_utils.h	2018-01-04 06:05:08.000000000 +0800
++++ memleax-1.1.1/ptrace_utils.h	2023-06-30 16:31:47.693773352 +0800
+@@ -16,7 +16,7 @@
+ 
+ #include <elf.h>
+ #include <sys/uio.h>
+-
++#include <asm/ptrace.h>
+   #ifdef MLX_ARMv7
+ typedef struct user_regs registers_info_t;
+   #else
